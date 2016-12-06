@@ -22,19 +22,46 @@ fn main() {
     // latitude (-W +E), longtitude (-S +N)
     let steps = (0, 0);
 
-    let least_steps = find_fastest_route(start_heading, steps, input);
+    let steplog = find_fastest_route(start_heading, steps, input);
 
-    let (latitude, longtitude) = least_steps;
+    let &(latitude, longtitude) = steplog.last().expect("aoeu");
 
+    // shortest manhattan distance is lat + lon
     println!("total: {}", (latitude.abs()+longtitude.abs()));
 
+    let position_visited_twice = find_position_visited_twice(steplog);
+
+    let (latitude, longtitude) = position_visited_twice.expect("aa");
+
+    // shortest manhattan distance is lat + lon
+    println!("total: {}", (latitude.abs()+longtitude.abs()));
 }
 
 
-fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) -> (i32, i32) {
+fn find_position_visited_twice(steplog: Vec<(i32,i32)>) -> Option<(i32, i32)> {
+    let mut sorted_steplog = steplog.clone();
+    sorted_steplog.sort();
+    let mut steplog = sorted_steplog.iter().peekable();
+    let mut double_position : Option<(i32, i32)> = None;
+
+    while let Some(step) = steplog.next() {
+        if let Some(next_step) = steplog.peek() {
+            if *next_step == step {
+                double_position = Some(*step);
+            }
+        } else {
+            break;
+        }
+    }
+
+    double_position
+}
+
+fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) -> Vec<(i32, i32)> {
 
     let mut heading = start_heading;
     let mut steps = start_steps;
+    let mut steplog : Vec<(i32, i32)> = vec![steps];
 
     // BufReader makes iterating over lines possible
     let mut lined_input = BufReader::new(input).lines();
@@ -48,9 +75,10 @@ fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) 
 
             heading = turn_in_direction(heading, turn_direction);
             steps = move_in_heading(steps, heading, steps_forward);
+            steplog.push(steps);
         }
     }
-    steps
+    steplog
 }
 
 fn turn_in_direction(old_heading: i32, turn_direction: &str) -> i32 {
