@@ -18,32 +18,23 @@ fn main() {
     //    S2
     let start_heading = 0;
 
-
-    // latitude (-W +E), longtitude (-S +N)
-    let steps = (0, 0);
-
-    let positionlog = find_fastest_route(start_heading, steps, input);
+    let positionlog = find_fastest_route(start_heading, input);
 
     let &(latitude, longtitude) = positionlog.last().expect("aoeu");
 
     // shortest manhattan distance is lat + lon
     println!("total: {}", (latitude.abs()+longtitude.abs()));
 
-    println!("{:?}", positionlog);
     let position_visited_twice = find_position_visited_twice(positionlog);
 
     let (latitude, longtitude) = position_visited_twice.expect("aa");
 
     // shortest manhattan distance is lat + lon
-    println!("total: {}", (latitude.abs()+longtitude.abs()));
-}
-
-fn check_if_visited(positionlog: &[(i32, i32)], position: (i32, i32)) -> usize {
-    0
+    println!("twice: {}", (latitude.abs()+longtitude.abs()));
 }
 
 fn find_position_visited_twice(old_positionlog: Vec<(i32,i32)>) -> Option<(i32, i32)> {
-    let mut positionlog_clone = old_positionlog.clone();
+    let positionlog_clone = old_positionlog.clone();
     let mut positionlog = positionlog_clone.iter().enumerate();
 
     let mut double_position : Option<(i32, i32)> = None;
@@ -58,14 +49,13 @@ fn find_position_visited_twice(old_positionlog: Vec<(i32,i32)>) -> Option<(i32, 
     double_position
 }
 
-fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) -> Vec<(i32, i32)> {
+fn find_fastest_route(start_heading: i32, input: File) -> Vec<(i32, i32)> {
 
     let mut heading = start_heading;
-    let mut steps = start_steps;
-    let position = (0,0);
+    let start_position = (0,0);
     let mut positionlog : Vec<(i32, i32)> = vec![];
     // push starting position
-    positionlog.push(position);
+    positionlog.push(start_position);
 
     // BufReader makes iterating over lines possible
     let mut lined_input = BufReader::new(input).lines();
@@ -78,9 +68,7 @@ fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) 
             let (turn_direction, steps_forward) = single_move.split_at(1);
 
             heading = turn_in_direction(heading, turn_direction);
-            steps = move_in_heading(steps, heading, steps_forward);
             positionlog = move_to_position(&positionlog, steps_forward, heading);
-
         }
     }
     positionlog
@@ -89,7 +77,7 @@ fn find_fastest_route(start_heading: i32, start_steps: (i32, i32), input: File) 
 fn move_to_position(old_positionlog: &Vec<(i32, i32)>, steps_string: &str, heading: i32) -> Vec<(i32, i32)> {
     let steps_forward = steps_string.parse::<i32>().expect("oaeuoeaouoe");
     let mut positionlog = old_positionlog.clone();
-    let mut position = old_positionlog.last().expect("aoeueo");
+    let position = old_positionlog.last().expect("aoeueo");
 
     // relative movement in two directions
     // latitude (-W +E), longtitude (-S +N)
@@ -139,23 +127,3 @@ fn turn_in_direction(old_heading: i32, turn_direction: &str) -> i32 {
     }
 }
 
-fn move_in_heading(step_count: (i32, i32), heading: i32, step_string: &str) -> (i32, i32) {
-
-    if let Ok(steps) = step_string.parse::<i32>() {
-        let (latitude, longtitude) = step_count;
-
-        let new_step_count = match heading % 4 {
-            0 => (latitude, longtitude+steps),
-            2 => (latitude, longtitude-steps),
-
-            1 => (latitude+steps, longtitude),
-            3 => (latitude-steps, longtitude),
-
-            _ => panic!("unreachable"),
-        };
-
-        new_step_count
-    } else {
-        panic!("oaeaoeuaoeuhtaeoduro'ethbtihadoh'lrsnhb");
-    }
-}
