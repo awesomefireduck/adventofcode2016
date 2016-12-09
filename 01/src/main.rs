@@ -93,27 +93,29 @@ fn move_to_position(old_positionlog: &Vec<(i32, i32)>, steps_string: &str, headi
     let new_position = (position.0 + steps.0, position.1 + steps.1);
 
     if steps.0 != 0 {
+        assert!(position.1 == new_position.1);
         if steps.0 > 0 {
-            for latitude in (position.0+1..new_position.0+1) {
+            for latitude in position.0+1..new_position.0+1 {
                 positionlog.push((latitude, new_position.1));
             }
         } else {
-            for latitude in (new_position.0-1..position.0-1).rev() {
+            for latitude in (new_position.0..position.0).rev() {
                 positionlog.push((latitude, new_position.1));
             }
         };
     } else if steps.1 != 0 {
+        assert!(position.0 == new_position.0);
         if steps.1 > 0 {
-            for longtitude in (position.1+1..new_position.1+1) {
+            for longtitude in position.1+1..new_position.1+1 {
                 positionlog.push((new_position.0, longtitude));
             }
         } else {
-            for longtitude in (new_position.1-1..position.1-1).rev() {
+            for longtitude in (new_position.1..position.1).rev() {
                 positionlog.push((new_position.0, longtitude));
             }
         }
     } else {
-        panic!("AAAAAAAAH");
+        panic!("AAAAAAAAH!!!!!!!");
     }
 
     positionlog
