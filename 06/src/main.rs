@@ -30,14 +30,14 @@ fn main() {
 }
 
 fn find_most_occurring_character(character_counts: &HashMap<char, usize>) -> char {
-    let mut most_occurring_char = 0 as char;
-    let mut max_count = 0;
+    let mut least_occurring_char = 0 as char;
+    let mut min_count = std::usize::MAX;
     for (&character, &count) in character_counts.iter() {
-        if max_count < count {
-            max_count = count;
-            most_occurring_char = character;
+        if min_count > count {
+            min_count = count;
+            least_occurring_char = character;
         }
     }
-    most_occurring_char
+    least_occurring_char
 }
 
