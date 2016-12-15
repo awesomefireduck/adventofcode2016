@@ -1,0 +1,6 @@
+[package]
+name = "07"
+version = "0.1.0"
+authors = ["Vince van Oosten <vvanoosten@computest.nl>"]
+
+[dependencies]
