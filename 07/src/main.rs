@@ -125,11 +125,15 @@ mod tests {
             assert_eq!(part_has_abba(part.0), part.1);
         }
     }
-#[test]
+    #[test]
     fn ipv7_has_tls_support_test() {
         let parts = [
             ("aaaa[aaaa]aabba", true),
             ("", false),
+            ("abba[mnop]qrst", true),
+            ("abcd[bddb]xyyx", false),
+            ("aaaa[qwer]tyui", false),
+            ("ioxxoj[asdfgh]zxcvbn", true),
         ];
         for part in parts.iter() {
             assert_eq!(ipv7_has_tls_support(&part.0.to_string()), part.1);
