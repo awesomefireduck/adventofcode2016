@@ -5,17 +5,23 @@ fn main() {
     let input = File::open("input").expect("oeuaeouoeauoeuaeo");
     let mut lined_input = BufReader::new(input).lines().peekable();
     let mut ipv7_addresses_with_tls_support : Vec<String>= vec![];
+    let mut ipv7_addresses_with_ssl_support : Vec<String>= vec![];
 
     while let Some(line) = lined_input.next() {
         let ipv7_address = line.expect("IPv7 line");
         if ipv7_has_tls_support(&ipv7_address) {
             ipv7_addresses_with_tls_support.push(ipv7_address);;;
         }
+        if ipv7_has_ssl_support(&ipv7_address) {
+            ipv7_addresses_with_ssl_support.push(ipv7_address);;;
+        }
     }
 
     let count = ipv7_addresses_with_tls_support.len();
     println!("tls support: {}", count);
 
+    let count = ipv7_addresses_with_ssl_support.len();
+    println!("ssl support: {}", count);
 }
 
 
@@ -137,6 +143,18 @@ mod tests {
         ];
         for part in parts.iter() {
             assert_eq!(ipv7_has_tls_support(&part.0.to_string()), part.1);
+        }
+    }
+    #[test]
+    fn ipv7_has_ssl_support_test() {
+        let parts = [
+            ("ioxxoj[asdfgh]zxcvbn", true),
+            ("xyx[xyx]xyx", false),
+            ("aaa[kek]eke", true),
+            ("zazbz[bzb]cdb", true),
+        ];
+        for part in parts.iter() {
+            assert_eq!(ipv7_has_ssl_support(&part.0.to_string()), part.1);
         }
     }
 }
