@@ -43,7 +43,9 @@ fn main() {
     let display : Screen = HashSet::new();
 
     let message = execute_instructions(&operations, &display);
-  //  print_display(&message);
+    print_display(&message);
+    println!("{}", message.len());
+    //let lit_pixels = count_lit_pixels(&message);
 }
 
 fn parse_instruction(instruction: &str) -> Result<Operation, &str> {
@@ -148,19 +150,26 @@ fn get_rect(prev_display: &Screen, a: u8, b: u8) -> Screen {
 
 fn rotate_column(prev_display: &Screen, column: u8, shift: u8) -> Screen {
     let mut display = Screen::new();
-    prev_display.clone()
+    for prev_pixel_pos in prev_display.iter() {
+        let pixel_pos = match prev_pixel_pos {
+            &(x, y) if x == column => (x, (y+shift)%6),
+            _ => *prev_pixel_pos,
+        };
+        display.insert(pixel_pos);
+    }
+    display
 }
 
 fn rotate_row(prev_display: &Screen, row: u8, shift: u8) -> Screen {
     let mut display = Screen::new();
     for prev_pixel_pos in prev_display.iter() {
         let pixel_pos = match prev_pixel_pos {
-            &(x, y) if x == row => (x, (y+shift) % 50),
+            &(x, y) if y == row => ((x+shift)%50, y),
             _ => *prev_pixel_pos,
         };
         display.insert(pixel_pos);
     }
-    prev_display.clone()
+    display
 }
 
 
@@ -214,7 +223,6 @@ mod tests {
                 expected_display.insert(*pixel);
             }
 
-
             let display = super::rotate_column(&start_display, case.0, case.1);
 
             println!("expected:");
@@ -245,7 +253,7 @@ mod tests {
             }
 
 
-            let display = super::rotate_column(&start_display, case.0, case.1);
+            let display = super::rotate_row(&start_display, case.0, case.1);
 
             println!("expected:");
             print_display(&expected_display);
